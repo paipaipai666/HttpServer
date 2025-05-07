@@ -106,27 +106,30 @@ void Server::SendData(SOCKET sock,char* ct,char* fileName){
     closesocket(sock);
 }
 
-void Server::SendErrorMSG(SOCKET sock){
-    std::string protocol_str = "HTTP/1.0 400 Bad Request\r\n";
-    std::string servName_str = "Server:simple web server\r\n";
-    std::string cntLen_str = "Content-length:2048\r\n";
-    std::string cntType_str = "Content-type:text/html\r\n\r\n";
-    std::string content_str = "<html><head><title>NETWORK</title></head>"
-        "<body><font size+==+5><br> 发生错误!查看请求文件名和请求方式!"
-        "</font></body></html>";
-    
-    std::vector<char> protocol(protocol_str.begin(),protocol_str.end());
-    std::vector<char> servName(servName_str.begin(),servName_str.end());
-    std::vector<char> cntLen(cntLen_str.begin(),cntLen_str.end());
-    std::vector<char> cntType(cntType_str.begin(),cntType_str.end());
-    std::vector<char> content(content_str.begin(),content_str.end());
+void Server::SendErrorMSG(SOCKET sock) {
+    std::string content = 
+        "<!DOCTYPE html>"
+        "<html>"
+        "<head>"
+        "<meta charset='UTF-8'>"
+        "<title>Error</title>"
+        "<style>body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }</style>"
+        "</head>"
+        "<body>"
+        "<h1>400 Bad Request</h1>"
+        "<p>发生错误! 请检查请求文件名和请求方式!</p>"
+        "</body>"
+        "</html>";
 
-    send(sock,protocol.data(),protocol.size(),0);
-    send(sock,servName.data(),servName.size(),0);
-    send(sock,cntLen.data(),cntLen.size(),0);
-    send(sock,cntType.data(),cntType.size(),0);
-    send(sock,content.data(),content.size(),0);
+    std::string response = 
+        "HTTP/1.1 400 Bad Request\r\n"
+        "Server: simple web server\r\n"
+        "Content-Type: text/html; charset=UTF-8\r\n"
+        "Content-Length: " + std::to_string(content.size()) + "\r\n"
+        "Connection: close\r\n"
+        "\r\n" + content;
 
+    send(sock, response.c_str(), response.size(), 0);
     closesocket(sock);
 }
 
