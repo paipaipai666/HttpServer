@@ -1,4 +1,4 @@
-#include "win/src/Server.cpp"
+#include "src/Server.cpp"
 #include <iostream>
 #include <cstdlib>
 
